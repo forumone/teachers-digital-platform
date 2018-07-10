@@ -1,20 +1,6 @@
 [
     {
         "fields": {
-            "intro": "<p>Intro</p>"
-        },
-        "model": "teachers_digital_platform.activityindexpage",
-        "pk": 4
-    },
-    {
-        "fields": {
-            "intro": "<h3>Find activities to help you teach and nurture the building blocks of financial capability in the classroom.</h3><p>BCFP classroom activities can be completed within a single class period and have all the materials you need to implement the activity-whether you're an experienced personal finance teacher or this is your first time teaching fianncial literacy. If you're using an existing financial education curriculum, these activities can serve as an engaging supplement.</p><p>Activities align with the My Money Five principles introduced by the Congressionally chartered Federal Financial Literacy and Education Commission.</p>"
-        },
-        "model": "teachers_digital_platform.activityindexpage",
-        "pk": 5
-    },
-    {
-        "fields": {
             "icon": null,
             "title": "Executive function"
         },
@@ -274,24 +260,17 @@
     },
     {
         "fields": {
-            "title": "Elementary school"
+            "title": "High School (9-10)"
         },
         "model": "teachers_digital_platform.activitygradelevel",
         "pk": 2
     },
     {
         "fields": {
-            "title": "Middle school"
+            "title": "High School (11-12)"
         },
         "model": "teachers_digital_platform.activitygradelevel",
         "pk": 3
-    },
-    {
-        "fields": {
-            "title": "High school"
-        },
-        "model": "teachers_digital_platform.activitygradelevel",
-        "pk": 4
     },
     {
         "fields": {
