@@ -87,7 +87,7 @@ class ActivitySchoolSubject(BaseActivityTaxonomy):
 
 class ActivityTopic(MPTTModel):
     title = models.CharField(max_length=255, unique=True)
-    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='parents')
     weight = models.IntegerField(default=0)
 
     class MPTTMeta:
@@ -101,6 +101,24 @@ class ActivityTopic(MPTTModel):
 
     def __str__(self):
         return self.title
+
+
+# class ActivitySubtopic(MPTTModel):
+#     title = models.CharField(max_length=255, unique=True)
+#     parent = TreeForeignKey('ActivityTopic', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+#     weight = models.IntegerField(default=0)
+
+#     class MPTTMeta:
+#         order_insertion_by = ['weight', 'title']
+
+#     panels = [
+#         FieldPanel('title'),
+#         FieldPanel('parent'),
+#         FieldPanel('weight')
+#     ]
+
+#     def __str__(self):
+#         return self.title
 
 
 class ActivityGradeLevel(BaseActivityTaxonomy):
