@@ -20,8 +20,13 @@ urlpatterns = [
     ),
     re_path(
         r'^get-review/$',
-        views.get_review,
+        views.get_review_by_id,
         name='get_review'
+    ),
+    re_path(
+        r'^continue-review/$',
+        views.continue_review,
+        name='continue_review'
     ),
     re_path(
         r'^update-review/$',

@@ -167,12 +167,12 @@ function saveWorkOutsideClickListener( event ) {
 }
 
 /**
- * Get available tokens from localStorage.
+ * Get available reviews from localStorage.
  *
- * @returns {Array} - List of available tokens
+ * @returns {Array} - List of available reviews
  */
-function getAvailableTokens() {
-  const tokens = {};
+function getAvailableReviews() {
+  const reviews = [];
   let key;
   let token;
   for ( let i = 0; i < localStorage.length; i++ ) {
@@ -180,26 +180,32 @@ function getAvailableTokens() {
     if ( key.search( /^crtool\./i ) !== -1 ) {
       token = key.replace( 'crtool.', '' );
       const review = getReviewFromLocalStorage( token );
-      const reviewTitle = review.curriculumTitle ? token + ' (' + review.curriculumTitle + ')' : token;
-      tokens[token] = reviewTitle;
+      const pass_code = review.pass_code;
+      const label = review.curriculumTitle
+        ? pass_code + ' (' + review.curriculumTitle + ')'
+        : pass_code;
+      reviews.push({
+        review: review,
+        label: label,
+      });
     }
   }
-  return tokens;
+  return reviews;
 }
 
 /**
  *
  */
 function setUpTokenDropdown() {
-  const tokens = getAvailableTokens();
-  const review = getCurrentReview();
+  const objs = getAvailableReviews();
+  const currentReview = getCurrentReview();
 
-  for ( const token in tokens ) {
+  for ( const obj of objs ) {
     let markup;
-    if ( review && review.id === token ) {
-      markup = '<option value="' + token + '" selected="selected">' + tokens[token] + '</option>';
+    if ( currentReview && currentReview.id === obj.review.id ) {
+      markup = '<option value="' + obj.review.pass_code + '" selected="selected">' + obj.label + '</option>';
     } else {
-      markup = '<option value="' + token + '">' + tokens[token] + '</option>';
+      markup = '<option value="' + obj.review.pass_code + '">' + obj.label + '</option>';
     }
     $( '#token--continue' ).append( markup );
   }
@@ -279,7 +285,7 @@ function beginReviewButtonClick( event ) {
       const review = JSON.parse( this.responseText );
       localStorage.setItem( 'curriculumReviewId', review.id );
       localStorage.setItem( 'crtool.' + review.id, JSON.stringify( review ) );
-      window.location.href = '../tool?token=' + review.id;
+      location.href = '../tool/?token=' + review.id;
     }
   };
   const requestUrl = '../create-review/';

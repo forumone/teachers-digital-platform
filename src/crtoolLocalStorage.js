@@ -146,7 +146,8 @@ const ls = {
         }
 
         const xhttp = new XMLHttpRequest();
-        xhttp.open("GET", "../get-review?token=" + review_id, true);
+        xhttp.open("POST", "../get-review/", true);
+        xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhttp.timeout = 5e3;
 
         return new Promise((resolve, reject) => {
@@ -169,7 +170,7 @@ const ls = {
                 }
             };
 
-            xhttp.send();
+            xhttp.send("token=" + review_id);
         });
     },
 

@@ -45,6 +45,7 @@ export default class CustomerReviewToolComponent extends React.Component {
 
             curriculumTitle: Repository.getCurriculumTitle(),
             curriculumId: Repository.getCurriculumId(),
+            curriculumPassCode: Repository.getCurriculumPassCode(),
             publicationDate: Repository.getPublicationDate(),
             gradeRange: Repository.getGradeRange(),
 
@@ -478,7 +479,7 @@ export default class CustomerReviewToolComponent extends React.Component {
                             <div className="h5 u-mb30">You’re reviewing</div>
                             <h1>{this.state.curriculumTitle}</h1>
                             <div className="h4 u-mb30">
-                                Access code: <strong>{this.state.curriculumId}</strong>
+                                Access code: <strong>{this.state.curriculumPassCode}</strong>
                                 <div className="u-inline-block u-ml15">
                                     <AccessCodeModal
                                         buttonText="Use this to save your work"
@@ -493,7 +494,7 @@ export default class CustomerReviewToolComponent extends React.Component {
                         <React.Fragment>
                             <div className="h4">You’re reviewing: <strong>{this.state.curriculumTitle}</strong></div>
                             <div className="h4">
-                                Access code: <strong>{this.state.curriculumId}</strong>
+                                Access code: <strong>{this.state.curriculumPassCode}</strong>
                                 <div className="u-inline-block u-ml15">
                                     <AccessCodeModal
                                         buttonText="Use this to save your work"

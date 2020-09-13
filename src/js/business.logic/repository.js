@@ -99,6 +99,10 @@ const Repository = {
         return crtoolLocalStorage.getItem("id");
     },
 
+    getCurriculumPassCode() {
+        return crtoolLocalStorage.getItem("pass_code");
+    },
+
     getPublicationDate() {
         return crtoolLocalStorage.getItem("publicationDate");
     },
