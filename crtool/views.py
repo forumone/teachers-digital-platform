@@ -10,7 +10,6 @@ from django.views.decorators.csrf import csrf_exempt
 from crtool.models import CurriculumReviewSession
 
 
-@csrf_exempt
 def create_review(request):
     if request.method == 'POST':
         fd = json.loads(request.body.decode("utf-8"))
@@ -49,7 +48,6 @@ def create_review(request):
     else:
         return HttpResponse(status=302, )
 
-@csrf_exempt
 def get_review_by_id(request):
     data = {}
     if request.method == 'POST':
@@ -66,7 +64,6 @@ def get_review_by_id(request):
             return HttpResponse(status=404)
     return JsonResponse(data)
 
-@csrf_exempt
 def continue_review(request):
     data = {}
     if request.method == 'POST':
@@ -85,7 +82,6 @@ def continue_review(request):
             return HttpResponseRedirect('../')
     return HttpResponseRedirect('../tool/#id='+data.get('id'))
 
-@csrf_exempt
 def update_review(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode("utf-8"))
