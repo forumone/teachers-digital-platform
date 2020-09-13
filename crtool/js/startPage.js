@@ -61,10 +61,9 @@ function setBeginReviewButtonEnabling() {
   document.getElementById( 'tdp-crt-begin-review-btn' ).disabled = !isEnabled;
 
   // only enable continue button if token is set
-  const curiculumIdValue = document.getElementById( 'token--continue' ).value;
+  const curriculumIdValue = $( '#token--continue' ).val();
 
-  document.getElementById( 'continue-review' ).disabled = curiculumIdValue ? false : true;
-
+  document.getElementById( 'continue-review' ).disabled = !curriculumIdValue;
 }
 
 /**
@@ -200,20 +199,32 @@ function setUpTokenDropdown() {
   const objs = getAvailableReviews();
   const currentReview = getCurrentReview();
 
+  let selectedPassCode = '';
   for ( const obj of objs ) {
-    let markup;
-    if ( currentReview && currentReview.id === obj.review.id ) {
-      markup = '<option value="' + obj.review.pass_code + '" selected="selected">' + obj.label + '</option>';
-    } else {
-      markup = '<option value="' + obj.review.pass_code + '">' + obj.label + '</option>';
+    if ( currentReview && currentReview.id === obj.review.id )  {
+      selectedPassCode = obj.review.pass_code;
     }
-    $( '#token--continue' ).append( markup );
+    // We don't bother declaring options pre-selected. See below.
+    const opt = new Option(obj.label, obj.review.pass_code);
+    $( '#token--continue' ).append( opt );
   }
   $( '#token--continue' ).select2( {
     tags: true,
     tokenSeparators: [ ',', ' ' ],
     multiple: false
   } );
+
+  // This delayed setting of value fixes two Select2 bugs:
+  // 1. Even if you give it Options that are pre-selected, the "tags" feature
+  //    will set selectedIndex to -1, so val() will still be null.
+  // 2. If you set via val() immediately, it just won't work. Hence, this
+  //    hacky delay is necessary.
+  setTimeout( () => {
+    if ( selectedPassCode ) {
+      $( '#token--continue' ).val( selectedPassCode );
+      $( '#token--continue' ).trigger( 'change' );
+    }
+  }, 500 );
 }
 
 /**
@@ -285,7 +296,7 @@ function beginReviewButtonClick( event ) {
       const review = JSON.parse( this.responseText );
       localStorage.setItem( 'curriculumReviewId', review.id );
       localStorage.setItem( 'crtool.' + review.id, JSON.stringify( review ) );
-      location.href = '../tool/?token=' + review.id;
+      location.href = '../tool/#id=' + review.id;
     }
   };
   const requestUrl = '../create-review/';
@@ -323,17 +334,16 @@ function clearLocalStorage( event ) {
  * Bind events.
  */
 function bindEvents() {
-  $( '#modal-save-work .save-work-push-analytics' ).click( function() { closeSaveWorkModalWindow(); } );
-  $( '#modal-start-over .start-over-close-push-analytics' ).click( function() { closeNewReviewModalWindow(); } );
-  $( '#modal-start-over .start-over-push-analytics' ).click( function( event ) { clearLocalStorage( event ); } );
-  $( 'form#begin-review-form .link-push-analytics' ).click( function( event ) { openSaveWorkModalWindow( event ); } );
-  $( 'form#form__continue-review .link-push-analytics' ).click( function( event ) { openSaveWorkModalWindow( event ); } );
-  $( 'form#begin-review-form' ).submit( function( event ) { beginReviewButtonClick( event ); } );
-  $( 'form#begin-review-form #new-review-modal-dialog-btn' ).click( function( event ) { openNewReviewModalWindow( event ); } );
-  $( 'form#begin-review-form #tdp-crt_title' ).change( function() { onValuesChanged(); } );
-  $( 'form#begin-review-form #tdp-crt_grade' ).change( function() { onValuesChanged(); } );
-  $( 'form#form__continue-review #token--continue' ).change( function() { onValuesChanged(); } );
-
+  $( '#modal-save-work .save-work-push-analytics' ).click( closeSaveWorkModalWindow );
+  $( '#modal-start-over .start-over-close-push-analytics' ).click( closeNewReviewModalWindow );
+  $( '#modal-start-over .start-over-push-analytics' ).click( clearLocalStorage );
+  $( 'form#begin-review-form .link-push-analytics' ).click( openSaveWorkModalWindow );
+  $( 'form#form__continue-review .link-push-analytics' ).click( openSaveWorkModalWindow );
+  $( 'form#begin-review-form' ).submit( beginReviewButtonClick );
+  $( 'form#begin-review-form #new-review-modal-dialog-btn' ).click( openNewReviewModalWindow );
+  $( 'form#begin-review-form #tdp-crt_title' ).change( onValuesChanged );
+  $( 'form#begin-review-form #tdp-crt_grade' ).change( onValuesChanged );
+  $( 'form#form__continue-review #token--continue' ).change( onValuesChanged );
 }
 
 /**

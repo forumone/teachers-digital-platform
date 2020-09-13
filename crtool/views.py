@@ -83,7 +83,7 @@ def continue_review(request):
             ValidationError
         ):
             return HttpResponseRedirect('../')
-    return HttpResponseRedirect('../tool/?token='+data.get('id'))
+    return HttpResponseRedirect('../tool/#id='+data.get('id'))
 
 @csrf_exempt
 def update_review(request):
