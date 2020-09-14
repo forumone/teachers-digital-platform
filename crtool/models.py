@@ -14,19 +14,21 @@ class CurriculumReviewSession(models.Model):
     data = JSONField()
     last_updated = models.DateTimeField('Updated', default=timezone.now)
 
-    # To gain access to a session ID, the password must be given and we check it
-    # with a long delay to avoid brute forcing. This is nowhere near as secure
-    # as traditional password hash but we don't have usernames, so we can't look
-    # up a hash.
-    def pass_code_generator(size=8, chars=string.ascii_letters + string.digits):
+    # To gain access to a session ID, the password must be given and we
+    # check it with a long delay to avoid brute forcing. This is nowhere
+    # near as secure as traditional password hash but we don't have
+    # usernames, so we can't look up a hash.
+    def pc_generator(size=8, chars=string.ascii_letters + string.digits):
         temp_id = ''.join(random.choice(chars) for _ in range(size))
-        while CurriculumReviewSession.objects.filter(pass_code=temp_id).exists():
+        objs = CurriculumReviewSession.objects
+        while objs.filter(pass_code=temp_id).exists():
             temp_id = ''.join(random.choice(chars) for _ in range(size))
         return temp_id
 
     def id_generator(size=22, chars=string.ascii_letters + string.digits):
         temp_id = ''.join(random.choice(chars) for _ in range(size))
-        while CurriculumReviewSession.objects.filter(id=temp_id).exists():
+        objs = CurriculumReviewSession.objects
+        while objs.filter(id=temp_id).exists():
             temp_id = ''.join(random.choice(chars) for _ in range(size))
         return temp_id
 

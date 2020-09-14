@@ -5,7 +5,6 @@ from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
 
 from crtool.models import CurriculumReviewSession
 
@@ -17,7 +16,7 @@ def create_review(request):
         title = fd['tdp-crt_title'] if 'tdp-crt_title' in fd else ''
         pub_date = fd['tdp-crt_pubdate'] if 'tdp-crt_pubdate' in fd else ''
         grade_range = fd['tdp-crt_grade'] if 'tdp-crt_grade' in fd else ''
-        pass_code = CurriculumReviewSession.pass_code_generator()
+        pass_code = CurriculumReviewSession.pc_generator()
         review_id = CurriculumReviewSession.id_generator()
         last_updated = timezone.now()
 
@@ -45,8 +44,8 @@ def create_review(request):
         if review:
             return JsonResponse(review.data)
 
-    else:
-        return HttpResponse(status=302, )
+    return HttpResponse(status=404)
+
 
 def get_review_by_id(request):
     data = {}
@@ -62,7 +61,11 @@ def get_review_by_id(request):
             ValidationError
         ):
             return HttpResponse(status=404)
-    return JsonResponse(data)
+
+        return JsonResponse(data)
+
+    return HttpResponse(status=404)
+
 
 def continue_review(request):
     data = {}
@@ -79,8 +82,11 @@ def continue_review(request):
             ValueError,
             ValidationError
         ):
-            return HttpResponseRedirect('../')
-    return HttpResponseRedirect('../tool/#id='+data.get('id'))
+            return HttpResponse(status=404)
+
+        return HttpResponseRedirect('../tool/#id=' + data.get('id'))
+
+    return HttpResponse(status=404)
 
 def update_review(request):
     if request.method == 'POST':

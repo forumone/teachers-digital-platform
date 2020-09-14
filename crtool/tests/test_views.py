@@ -4,7 +4,7 @@ import json
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
-from crtool.views import create_review, get_review, update_review
+from crtool.views import create_review, get_review, update_review, continue_review
 
 
 class CreateReviewTest(TestCase):
@@ -38,7 +38,6 @@ class CreateReviewTest(TestCase):
         post = {
             "tdp-crt_pubdate": "Jan 1, 2001",
             "tdp-crt_grade": "Elementary school",
-            "tdp-crt_pass_code": "P455W0RD"
         }
         self.check_post(post, self.assertBadRequest)
 
@@ -47,7 +46,6 @@ class CreateReviewTest(TestCase):
             "tdp-crt_title": "",
             "tdp-crt_pubdate": "Jan 1, 2001",
             "tdp-crt_grade": "Elementary school",
-            "tdp-crt_pass_code": "P455W0RD"
         }
         self.check_post(post, self.assertBadRequest)
 
@@ -55,7 +53,6 @@ class CreateReviewTest(TestCase):
         post = {
             "tdp-crt_title": "Test title",
             "tdp-crt_pubdate": "Jan 1, 2001",
-            "tdp-crt_pass_code": "P455W0RD"
         }
         self.check_post(post, self.assertBadRequest)
 
@@ -64,7 +61,6 @@ class CreateReviewTest(TestCase):
             "tdp-crt_title": "Test title",
             "tdp-crt_pubdate": "Jan 1, 2001",
             "tdp-crt_grade": "",
-            "tdp-crt_pass_code": "P455W0RD"
         }
         self.check_post(post, self.assertBadRequest)
 
@@ -73,13 +69,11 @@ class CreateReviewTest(TestCase):
             "tdp-crt_title": "Test title",
             "tdp-crt_pubdate": "Jan 1, 2001",
             "tdp-crt_grade": "Elementary school",
-            "tdp-crt_pass_code": "P455W0RD"
         }
         compare = {
             "curriculumTitle": "Test title",
             "publicationDate": "Jan 1, 2001",
             "gradeRange": "Elementary school",
-            "pass_code": "P455W0RD"
         }
         self.check_post(post, self.assertCreateSuccess, compare=compare)
 
@@ -92,7 +86,6 @@ class CreateReviewTest(TestCase):
             "curriculumTitle": "Test title",
             "gradeRange": "Elementary school",
             "publicationDate": "",
-            "pass_code": ""
         }
         self.check_post(post, self.assertCreateSuccess, compare=compare)
 
@@ -101,13 +94,11 @@ class CreateReviewTest(TestCase):
             "tdp-crt_title": "Test title",
             "tdp-crt_grade": "Elementary school",
             "tdp-crt_pubdate": "",
-            "tdp-crt_pass_code": ""
         }
         compare = {
             "curriculumTitle": "Test title",
             "gradeRange": "Elementary school",
             "publicationDate": "",
-            "pass_code": ""
         }
         self.check_post(post, self.assertCreateSuccess, compare=compare)
 
@@ -115,7 +106,6 @@ class CreateReviewTest(TestCase):
         post = {
             "tdp-crt_pubdate": "Jan 1, 2001",
             "tdp-crt_grade": "Elementary school",
-            "tdp-crt_pass_code": "P455W0RD"
         }
         self.check_post(post, self.assertBadRequest, ajax=True)
 
@@ -124,7 +114,6 @@ class CreateReviewTest(TestCase):
             "tdp-crt_title": "",
             "tdp-crt_pubdate": "Jan 1, 2001",
             "tdp-crt_grade": "Elementary school",
-            "tdp-crt_pass_code": "P455W0RD"
         }
         self.check_post(post, self.assertBadRequest, ajax=True)
 
@@ -132,7 +121,6 @@ class CreateReviewTest(TestCase):
         post = {
             "tdp-crt_title": "Test title",
             "tdp-crt_pubdate": "Jan 1, 2001",
-            "tdp-crt_pass_code": "P455W0RD"
         }
         self.check_post(post, self.assertBadRequest, ajax=True)
 
@@ -141,7 +129,6 @@ class CreateReviewTest(TestCase):
             "tdp-crt_title": "Test title",
             "tdp-crt_pubdate": "Jan 1, 2001",
             "tdp-crt_grade": "",
-            "tdp-crt_pass_code": "P455W0RD"
         }
         self.check_post(post, self.assertBadRequest, ajax=True)
 
@@ -150,14 +137,12 @@ class CreateReviewTest(TestCase):
             "tdp-crt_title": "Test title",
             "tdp-crt_pubdate": "Jan 1, 2001",
             "tdp-crt_grade": "Elementary school",
-            "tdp-crt_pass_code": "P455W0RD"
         }
 
         compare = {
             "curriculumTitle": "Test title",
             "publicationDate": "Jan 1, 2001",
             "gradeRange": "Elementary school",
-            "pass_code": "P455W0RD"
         }
         self.check_post(post, self.assertCreateSuccess, ajax=True, compare=compare)  # noqa 501
 
@@ -170,7 +155,6 @@ class CreateReviewTest(TestCase):
             "curriculumTitle": "Test title",
             "gradeRange": "Elementary school",
             "publicationDate": "",
-            "pass_code": ""
         }
         self.check_post(post, self.assertCreateSuccess, compare=compare, ajax=True)  # noqa 501
 
@@ -179,13 +163,11 @@ class CreateReviewTest(TestCase):
             "tdp-crt_title": "Test title",
             "tdp-crt_grade": "Elementary school",
             "tdp-crt_pubdate": "",
-            "tdp-crt_pass_code": ""
         }
         compare = {
             "curriculumTitle": "Test title",
             "gradeRange": "Elementary school",
             "publicationDate": "",
-            "pass_code": ""
         }
         self.check_post(post, self.assertCreateSuccess, compare=compare, ajax=True)  # noqa 501
 
@@ -196,16 +178,17 @@ class GetReviewTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
 
-    def get(self, get, ajax=False):
+    def post(self, post, ajax=False):
         kwargs = {"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"} if ajax else {}
-        request = self.factory.get(reverse("get_review") + get, **kwargs)
-        return get_review(request)
+        kwargs['content_type'] = "application/x-www-form-urlencoded"
+        request = self.factory.post(reverse("get_review"), data=post, **kwargs)
+        return update_review(request)
 
-    def check_get(self, get, response_check, ajax=False, compare={}):
+    def check_post(self, post, response_check, ajax=False, compare={}):
         if compare:
-            response_check(self.get(get, ajax=ajax), compare=compare)
+            response_check(self.post(post, ajax=ajax), compare=compare)
         else:
-            response_check(self.get(get, ajax=ajax))
+            response_check(self.post(post, ajax=ajax))
 
     def assertPageNotFound(self, response):
         self.assertEqual(response.status_code, 404)
@@ -219,7 +202,9 @@ class GetReviewTest(TestCase):
 
     # Test with token id that exists
     def test_existing_id(self):
-        get = '?token=02d19cc1314747ef8aacb3'
+        post = {
+            "token": "02d19cc1314747ef8aacb3"
+        }
         compare = {
             "id": "02d19cc1314747ef8aacb3",
             "START": "Quality",
@@ -233,27 +218,34 @@ class GetReviewTest(TestCase):
             "criterionClickedTitles": "{\"quality-crt-question-2\":\"clicked\"}",  # noqa 501
             "dimensionOverallScores": "{\"Quality\":\"limited\"}",
         }
-        self.check_get(get, self.assertGetSuccess, compare=compare)
+        self.check_post(post, self.assertGetSuccess, compare=compare)
 
     # Test with token id that doesn't exist
     def test_non_existent_id(self):
-        get = '?token=02d19cc1314747ef8aacbz'
-        self.check_get(get, self.assertPageNotFound)
+        post = {
+            "token": "02d19cc1314747ef8aacbz"
+        }
+        self.check_post(post, self.assertPageNotFound)
 
     # Test with null
     def test_null(self):
-        get = ''
-        self.check_get(get, self.assertPageNotFound)
+        post = {
+        }
+        self.check_post(post, self.assertPageNotFound)
 
     # Test with empty string
     def test_empty_id(self):
-        get = '?token='
-        self.check_get(get, self.assertPageNotFound)
+        post = {
+            "token": ""
+        }
+        self.check_post(post, self.assertPageNotFound)
 
     # Test with short fake token id
     def test_invalid_id(self):
-        get = '?token=apple'
-        self.check_get(get, self.assertPageNotFound)
+        post = {
+            "token": "apple"
+        }
+        self.check_post(post, self.assertPageNotFound)
 
 
 class UpdateReviewTest(TestCase):
@@ -295,7 +287,7 @@ class UpdateReviewTest(TestCase):
     def test_update_title(self):
         post = {
             "id": "242449c9251243c1b512d2",
-            "pass_code": None,
+            "pass_code": "242449c9",
             "gradeRange": "Middle school",
             "last_updated": "2020-07-12 04:52:56.858970+00:00",
             "curriculumTitle": "Updated title",
@@ -303,7 +295,7 @@ class UpdateReviewTest(TestCase):
         }
         compare = {
             "id": "242449c9251243c1b512d2",
-            "pass_code": None,
+            "pass_code": "242449c9",
             "gradeRange": "Middle school",
             "last_updated": "2020-07-12 04:52:56.858970+00:00",
             "curriculumTitle": "Updated title",
@@ -315,7 +307,7 @@ class UpdateReviewTest(TestCase):
     def test_non_existent_id(self):
         post = {
             "id": "6893d3af8eb54e74a27883",
-            "pass_code": None,
+            "pass_code": "6893d3af",
             "gradeRange": "Middle school",
             "last_updated": "2020-07-12 04:52:56.858970+00:00",
             "curriculumTitle": "Updated title",
@@ -379,3 +371,30 @@ class UpdateReviewTest(TestCase):
     def test_null_post(self):
         post = None
         self.check_post(post, self.assertPageNotFound)
+
+
+class ContinueReviewTest(TestCase):
+    fixtures = ['crtool_initial_data']
+
+    def setUp(self):
+        self.factory = RequestFactory()
+
+    def post(self, post):
+        kwargs = {"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+        kwargs['content_type'] = "application/x-www-form-urlencoded"
+        request = self.factory.post(reverse("continue_review"), post, **kwargs)
+        return continue_review(request)
+
+    def test_non_existent_pass_code(self):
+        post = {
+            "pass_code": "6893d3af",
+        }
+        response = self.post(post)
+        self.assertEqual(response.status_code, 404)
+
+    def test_found_pass_code(self):
+        post = {
+            "pass_code": "02d19cc1",
+        }
+        response = self.post(post)
+        self.assertRedirects(response, "../tool/#id=02d19cc1")
