@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 
 from django.core.exceptions import ValidationError
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.utils import timezone
 
 from crtool.models import CurriculumReviewSession
@@ -47,7 +47,7 @@ def create_review(request):
     return HttpResponse(status=404)
 
 
-def get_review_by_id(request):
+def get_review(request):
     data = {}
     if request.method == 'POST':
         review_id = request.POST.get('token')
@@ -87,6 +87,7 @@ def continue_review(request):
         return HttpResponseRedirect('../tool/#id=' + data.get('id'))
 
     return HttpResponse(status=404)
+
 
 def update_review(request):
     if request.method == 'POST':

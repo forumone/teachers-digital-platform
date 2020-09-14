@@ -20,7 +20,7 @@ urlpatterns = [
     ),
     re_path(
         r'^get-review/$',
-        views.get_review_by_id,
+        views.get_review,
         name='get_review'
     ),
     re_path(

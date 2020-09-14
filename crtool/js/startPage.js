@@ -179,14 +179,14 @@ function getAvailableReviews() {
     if ( key.search( /^crtool\./i ) !== -1 ) {
       token = key.replace( 'crtool.', '' );
       const review = getReviewFromLocalStorage( token );
-      const pass_code = review.pass_code;
-      const label = review.curriculumTitle
-        ? pass_code + ' (' + review.curriculumTitle + ')'
-        : pass_code;
-      reviews.push({
+      const passCode = review.pass_code;
+      const label = review.curriculumTitle ?
+        passCode + ' (' + review.curriculumTitle + ')' :
+        passCode;
+      reviews.push( {
         review: review,
-        label: label,
-      });
+        label: label
+      } );
     }
   }
   return reviews;
@@ -201,11 +201,11 @@ function setUpTokenDropdown() {
 
   let selectedPassCode = '';
   for ( const obj of objs ) {
-    if ( currentReview && currentReview.id === obj.review.id )  {
+    if ( currentReview && currentReview.id === obj.review.id ) {
       selectedPassCode = obj.review.pass_code;
     }
     // We don't bother declaring options pre-selected. See below.
-    const opt = new Option(obj.label, obj.review.pass_code);
+    const opt = new Option( obj.label, obj.review.pass_code );
     $( '#token--continue' ).append( opt );
   }
   $( '#token--continue' ).select2( {
@@ -214,11 +214,14 @@ function setUpTokenDropdown() {
     multiple: false
   } );
 
-  // This delayed setting of value fixes two Select2 bugs:
-  // 1. Even if you give it Options that are pre-selected, the "tags" feature
-  //    will set selectedIndex to -1, so val() will still be null.
-  // 2. If you set via val() immediately, it just won't work. Hence, this
-  //    hacky delay is necessary.
+  /**
+   * This delayed setting of value fixes two Select2 bugs:
+   *
+   * 1. Even if you give it Options that are pre-selected, the "tags" feature
+   *    will set selectedIndex to -1, so val() will still be null.
+   * 2. If you set via val() immediately, it just won't work. Hence, this
+   *    hacky delay is necessary.
+   */
   setTimeout( () => {
     if ( selectedPassCode ) {
       $( '#token--continue' ).val( selectedPassCode );

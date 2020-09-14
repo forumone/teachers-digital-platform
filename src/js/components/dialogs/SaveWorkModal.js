@@ -113,7 +113,7 @@ export default class SaveWorkModal extends React.Component {
                                     </button>
                                     <h2 id="modal-save-work_title" className="h3">Saving your work</h2>
                                     <div id="modal-save-work_desc">
-                                        <p><strong>To return to a review you have already started, you need to save the unique access code for your review. The access code can be found at the top left of your screen or in the review's URL.</strong></p>
+                                        <p><strong>To return to a review you have already started, you need to save the unique access code for your review. The access code can be found at the top left of your screen.</strong></p>
                                         <p>Your work will be saved automatically at regular intervals. However, you can also save your work at any time by clicking the “Save my work” button at the bottom of each dimension page.</p>
                                         <p>To save a permanent copy of your work, please print the summary or save it as a PDF for every dimension as you complete it. You can also print or save a summary of the entire review. Learn how to <a href="https://www.consumerfinance.gov/consumer-tools/save-as-pdf-instructions/" target="_blank" rel="noopener noreferrer" onClick={(e) => {this.props.sendAnalyticsForLinkClick("save the summary as a PDF", "https://www.consumerfinance.gov/consumer-tools/save-as-pdf-instructions/");}}>save the summary as a PDF</a>.</p>
                                         <p>You can have multiple reviews in progress at a time. Each will have a unique access code.</p>

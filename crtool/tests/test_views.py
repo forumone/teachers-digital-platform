@@ -1,10 +1,14 @@
 # from django.test import TestCase
 import json
 
+from crtool.views import (
+    continue_review,
+    create_review,
+    get_review,
+    update_review,
+)
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
-
-from crtool.views import create_review, get_review, update_review, continue_review
 
 
 class CreateReviewTest(TestCase):
@@ -180,15 +184,14 @@ class GetReviewTest(TestCase):
 
     def post(self, post, ajax=False):
         kwargs = {"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"} if ajax else {}
-        kwargs['content_type'] = "application/x-www-form-urlencoded"
-        request = self.factory.post(reverse("get_review"), data=post, **kwargs)
-        return update_review(request)
+        request = self.factory.post(reverse("get_review"), post, **kwargs)
+        return get_review(request)
 
-    def check_post(self, post, response_check, ajax=False, compare={}):
+    def check_post(self, post, response_check, compare={}):
         if compare:
-            response_check(self.post(post, ajax=ajax), compare=compare)
+            response_check(self.post(post), compare=compare)
         else:
-            response_check(self.post(post, ajax=ajax))
+            response_check(self.post(post))
 
     def assertPageNotFound(self, response):
         self.assertEqual(response.status_code, 404)
@@ -203,12 +206,12 @@ class GetReviewTest(TestCase):
     # Test with token id that exists
     def test_existing_id(self):
         post = {
-            "token": "02d19cc1314747ef8aacb3"
+            "token": "02d19cc1314747ef8aacb3",
         }
         compare = {
             "id": "02d19cc1314747ef8aacb3",
             "START": "Quality",
-            "pass_code": "",
+            "pass_code": "02d19cc1",
             "gradeRange": "High school",
             "last_updated": "2020-08-06T00:59:22.576547+00:00",
             "quality_status": "in progress",
@@ -381,20 +384,20 @@ class ContinueReviewTest(TestCase):
 
     def post(self, post):
         kwargs = {"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
-        kwargs['content_type'] = "application/x-www-form-urlencoded"
         request = self.factory.post(reverse("continue_review"), post, **kwargs)
         return continue_review(request)
 
     def test_non_existent_pass_code(self):
         post = {
-            "pass_code": "6893d3af",
+            "pass_code": "fakefake",
         }
         response = self.post(post)
         self.assertEqual(response.status_code, 404)
 
     def test_found_pass_code(self):
         post = {
-            "pass_code": "02d19cc1",
+            "pass_code": "1da8305d",
         }
         response = self.post(post)
-        self.assertRedirects(response, "../tool/#id=02d19cc1")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "../tool/#id=1da8305db6774e46970ec3")
