@@ -1,14 +1,15 @@
 # from django.test import TestCase
 import json
 
+from django.test import RequestFactory, TestCase
+from django.urls import reverse
+
 from crtool.views import (
     continue_review,
     create_review,
     get_review,
     update_review,
 )
-from django.test import RequestFactory, TestCase
-from django.urls import reverse
 
 
 class CreateReviewTest(TestCase):
