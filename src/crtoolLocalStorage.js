@@ -151,7 +151,6 @@ const ls = {
         const xhttp = new XMLHttpRequest();
         xhttp.open("POST", "../get-review/", true);
         xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhttp.setRequestHeader('X-CSRFToken', window.csrftoken);
         xhttp.timeout = 5e3;
 
         return new Promise((resolve, reject) => {
@@ -214,7 +213,6 @@ const ls = {
         xhttp.open("POST", "../update-review/", true);
         xhttp.timeout = 5e3;
         xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        xhttp.setRequestHeader('X-CSRFToken', window.csrftoken);
 
         return new Promise((resolve, reject) => {
             xhttp.onreadystatechange = () => {

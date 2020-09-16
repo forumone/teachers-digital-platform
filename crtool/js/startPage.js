@@ -304,7 +304,6 @@ function beginReviewButtonClick( event ) {
   };
   const requestUrl = '../create-review/';
   xhttp.open( 'POST', requestUrl );
-  xhttp.setRequestHeader('X-CSRFToken', window.csrftoken);
   xhttp.send(
     JSON.stringify( {
       'tdp-crt_title': curriculumTitle,

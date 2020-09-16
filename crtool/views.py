@@ -5,10 +5,12 @@ from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
 from crtool.models import CurriculumReviewSession
 
 
+@csrf_exempt
 def create_review(request):
     if request.method == 'POST':
         fd = json.loads(request.body.decode("utf-8"))
@@ -47,6 +49,7 @@ def create_review(request):
     return HttpResponse(status=404)
 
 
+@csrf_exempt
 def get_review(request):
     data = {}
     if request.method == 'POST':
@@ -67,6 +70,7 @@ def get_review(request):
     return HttpResponse(status=404)
 
 
+@csrf_exempt
 def continue_review(request):
     data = {}
     if request.method == 'POST':
@@ -89,6 +93,7 @@ def continue_review(request):
     return HttpResponse(status=404)
 
 
+@csrf_exempt
 def update_review(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode("utf-8"))

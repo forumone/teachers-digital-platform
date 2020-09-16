@@ -34,10 +34,6 @@
 {# BODY items #}
 
 {% block header %}
-    {{ csrf_input }}
-    <script>
-      window.csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    </script>
     <header class="o-header" role="banner">
         <div class="m-global-eyebrow m-global-eyebrow__horizontal">
             <div class="wrapper wrapper__match-content">
@@ -240,7 +236,6 @@
             <h2>Continue a review</h2>
             <p>Enter your access code to return to a review in progress.</p>
             <form id="form__continue-review" class="o-form" method="POST" action="../continue-review/">
-                {{ csrf_input }}
                 <div class="o-form_group">
                     <div class="m-form-field m-form-field__select">
                     <label class="a-label a-label__heading" for="token--continue">Access code</label>
